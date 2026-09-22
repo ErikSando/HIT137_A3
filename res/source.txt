@@ -1,0 +1,2 @@
+image1.jpg: https://unsplash.com/photos/waterfalls-under-cloudy-sky-PH0HYjsf2n8
+image2.jpg: https://unsplash.com/photos/northern-lights-during-night-time-R3pUGn5YiTg
