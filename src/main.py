@@ -1,15 +1,11 @@
-from window import *
+from app import *
 from puzzle import *
+from window import *
 
 def main():
     window = Window("Game", 800, 600)
-
-    thing = Puzzle("res/image1.jpg")
-
-    label = tk.Label(window, image=thing.get_image())
-    label.pack()
-
-    window.mainloop()
+    app = App(window)
+    app.start()
 
 if __name__ == "__main__":
     main()
