@@ -1,0 +1,4 @@
+Load an image, split into tiles
+
+Prompt the user to pick an image and a grid size (3x3, 4x4, 5x5)
+ > load the image, make tiles, apply transformations

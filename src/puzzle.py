@@ -23,20 +23,24 @@ class Puzzle:
         pil_image = Image.fromarray(rgb)
         self.tk_image = ImageTk.PhotoImage(pil_image)
 
-        self.make_tiles(grid_size)
+        self.grid_size = grid_size
+        self.make_tiles()
 
-    def make_tiles(self, grid_size: int = 3):
-        tw = int(self.w / grid_size)
-        th = int(self.h / grid_size)
+    def make_tiles(self, grid_size: int = None):
+        if grid_size is not None:
+            self.grid_size = grid_size
+
+        # width and height of individual tiles
+        tw = int(self.w / self.grid_size)
+        th = int(self.h / self.grid_size)
 
         self.tiles = []
 
-        for i in range(grid_size):
+        for i in range(self.grid_size):
             self.tiles.append([])
 
-            for j in range(grid_size):
+            for j in range(self.grid_size):
                 tile = Tile(self.image[th * i : th * (i + 1), tw * j : tw * (j + 1)])
-                # transform the tile here
                 self.tiles[i].append(tile)
 
     def swap_tiles(self, x1: int, x2: int, y1: int, y2: int):
@@ -44,7 +48,7 @@ class Puzzle:
         self.tiles[y1][x1] = self.tiles[y2][x2]
         self.tiles[y2][x2] = temp
 
-    def get_image(self) -> tk.PhotoImage:
+    def get_photoimage(self) -> tk.PhotoImage:
         return self.tk_image
 
     def get_grid(self):
