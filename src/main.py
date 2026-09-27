@@ -3,7 +3,7 @@ from puzzle import *
 from window import *
 
 def main():
-    window = Window("Game", 800, 600)
+    window = Window("Game", 1100, 650)
     app = App(window)
     app.start()
 

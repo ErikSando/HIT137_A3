@@ -20,8 +20,7 @@ class Puzzle:
         self.w, self.h = self.image.shape[1], self.image.shape[0]
 
         rgb = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
-        pil_image = Image.fromarray(rgb)
-        self.tk_image = ImageTk.PhotoImage(pil_image)
+        self.tk_image = ImageTk.PhotoImage(Image.fromarray(rgb))
 
         self.grid_size = grid_size
         self.make_tiles()
@@ -40,7 +39,8 @@ class Puzzle:
             self.tiles.append([])
 
             for j in range(self.grid_size):
-                tile = Tile(self.image[th * i : th * (i + 1), tw * j : tw * (j + 1)])
+                tile = Tile(self.image[th * i : th * (i + 1), tw * j : tw * (j + 1)]) # crop the image
+                # apply a transformation here, alternatively apply the transformation in the App class
                 self.tiles[i].append(tile)
 
     def swap_tiles(self, x1: int, x2: int, y1: int, y2: int):
