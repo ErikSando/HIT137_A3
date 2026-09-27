@@ -1,6 +1,7 @@
 import cv2
 import tkinter as tk
 import random
+from PIL import Image, ImageTk
 from tile import Tile
 from transformations import Rotate, HorizontalFlip, VerticalFlip
 
@@ -65,15 +66,26 @@ class Puzzle:
 
                 self.tiles[i].append(tile)
 
+    def get_tile(self, pos: tuple[int, int]) -> Tile:
+        r, c = pos
+
+        assert r >= 0 and r < self.grid_size, "row number does not fit within the grid size"
+        assert c >= 0 and c < self.grid_size, "column number does not fit within the grid size"
+
+        return self.tiles[r][c]
+
+    def swap_tiles(self, pos1: tuple[int, int], pos2: tuple[int, int]):
+        tile1, tile2 = self.get_tile(pos1), self.get_tile(pos2) # checks if the positions are valid
+
+        r1, c1 = pos1
+        r2, c2 = pos2
+
+        self.tiles[r1][c1], self.tiles[r2][c2] = tile2, tile1
+
     def reset_tiles(self):
         for i in range(self.grid_size):
             for j in range(self.grid_size):
                 self.tiles[i][j] = Tile(self.image[self.th * i : self.th * (i + 1), self.tw * j : self.tw * (j + 1)])
-
-    def swap_tiles(self, x1: int, x2: int, y1: int, y2: int):
-        temp = self.tiles[y1][x1]
-        self.tiles[y1][x1] = self.tiles[y2][x2]
-        self.tiles[y2][x2] = temp
 
     def get_photoimage(self) -> tk.PhotoImage:
         return self.tk_image
