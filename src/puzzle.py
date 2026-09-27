@@ -38,14 +38,20 @@ class Puzzle:
         self.tiles = []
         self.initial_orientations = {}
 
-        transformations = [ Rotate(), HorizontalFlip(), VerticalFlip() ]
+        transformations = [
+            Rotate(90), Rotate(180), Rotate(270),
+            # duplicated so each type of transformation has a 1/3 chance of being picked, there's probably a better approach
+            HorizontalFlip(), HorizontalFlip(), HorizontalFlip(),
+            VerticalFlip(), VerticalFlip(), VerticalFlip()
+        ]
 
         for i in range(self.grid_size):
             self.tiles.append([])
 
             for j in range(self.grid_size):
                 tile = Tile(self.image[self.th * i : self.th * (i + 1), self.tw * j : self.tw * (j + 1)]) # crop the image
-                random.choice(transformations).transform(tile) # random transformation
+                t = random.choice(transformations) # random transformation
+                t.apply(tile)
                 self.tiles[i].append(tile)
 
         # swap 5 random tiles, placeholder for now, probably should make a setting for this
