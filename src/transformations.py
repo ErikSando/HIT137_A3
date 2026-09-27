@@ -1,9 +1,11 @@
 import cv2
-from tile import *
+from tile import Tile
 
 class BaseTransformation:
     def transform(self, tile: Tile):
         pass
+
+# Swap is handled by the Puzzle class, pixel data doesnt need to be changed in a swap, only tile indexing is changed
 
 class HorizontalFlip(BaseTransformation):
     def transform(self, tile: Tile):

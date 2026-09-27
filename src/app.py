@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
-from window import *
-from puzzle import *
+from window import Window
+from puzzle import Puzzle
 
 # Handles the functionality of the program
 class App:

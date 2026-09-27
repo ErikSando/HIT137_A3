@@ -1,6 +1,5 @@
-from app import *
-from puzzle import *
-from window import *
+from app import App
+from window import Window
 
 def main():
     window = Window("Game", 1100, 650)

@@ -1,8 +1,8 @@
 import cv2
 import tkinter as tk
 import random
-from tile import *
-from transformations import *
+from tile import Tile
+from transformations import Rotate, HorizontalFlip, VerticalFlip
 
 # Handles resizing, tiling and transformations on images to create puzzles
 class Puzzle:

@@ -27,7 +27,6 @@ tiles - see NotImplementedError below. ***
 """
 
 import random
-import warnings
 
 from transformations import HorizontalFlip, Rotate
 from puzzle import Puzzle
