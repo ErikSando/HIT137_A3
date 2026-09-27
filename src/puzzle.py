@@ -1,7 +1,8 @@
 import cv2
 import tkinter as tk
-from PIL import Image, ImageTk
+import random
 from tile import *
+from transformations import *
 
 # Handles resizing, tiling and transformations on images to create puzzles
 class Puzzle:
@@ -41,6 +42,23 @@ class Puzzle:
             for j in range(self.grid_size):
                 tile = Tile(self.image[th * i : th * (i + 1), tw * j : tw * (j + 1)]) # crop the image
                 # apply a transformation here, alternatively apply the transformation in the App class
+
+                # transformation examples
+
+                n = random.randint(1, 3)
+
+                if n == 1:
+                    t = Rotate()
+                    t.transform(tile, random.randint(1, 3))
+
+                elif n == 2:
+                    t = HorizontalFlip()
+                    t.transform(tile)
+
+                elif n == 3:
+                    t = VerticalFlip()
+                    t.transform(tile)
+
                 self.tiles[i].append(tile)
 
     def swap_tiles(self, x1: int, x2: int, y1: int, y2: int):
