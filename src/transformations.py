@@ -18,8 +18,6 @@ class VerticalFlip(BaseTransformation):
         tile.make_photoimage()
 
 class Rotate(BaseTransformation):
-    def transform(self, tile: Tile, n_rotations: int):
-        for _ in range(n_rotations):
-            tile.image = cv2.rotate(tile.image, cv2.ROTATE_90_CLOCKWISE)
-
+    def transform(self, tile: Tile):
+        tile.image = cv2.rotate(tile.image, cv2.ROTATE_90_CLOCKWISE)
         tile.make_photoimage()

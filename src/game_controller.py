@@ -100,7 +100,7 @@ class GameController:
 
         row, col = position
         tile = self.puzzle.tiles[row][col]
-        Rotate().transform(tile, 1)
+        Rotate().transform(tile)
         orient = self._orientation[id(tile)]
         orient["rotation"] = (orient["rotation"] + 90) % 360
         self.selected_position = None

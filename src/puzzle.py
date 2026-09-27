@@ -38,33 +38,32 @@ class Puzzle:
         self.tiles = []
         self.initial_orientations = {}
 
+        transformations = [ Rotate(), HorizontalFlip(), VerticalFlip() ]
+
         for i in range(self.grid_size):
             self.tiles.append([])
 
             for j in range(self.grid_size):
                 tile = Tile(self.image[self.th * i : self.th * (i + 1), self.tw * j : self.tw * (j + 1)]) # crop the image
-                # apply a transformation here, alternatively apply the transformation in the App class
-
-                # transformation examples
-
-                n = random.randint(1, 2)
-
-                if n == 1:
-                    t = Rotate()
-                    k = random.randint(1, 3)
-                    t.transform(tile, k)
-                    self.initial_orientations[(i, j)] = {"kind": "rotate", "n": k}
-
-                elif n == 2:
-                    t = HorizontalFlip()
-                    t.transform(tile)
-                    self.initial_orientations[(i, j)] = {"kind": "flip_h"}
-
-                # elif n == 3:
-                #     t = VerticalFlip()
-                #     t.transform(tile)
-
+                random.choice(transformations).transform(tile) # random transformation
                 self.tiles[i].append(tile)
+
+        # swap 5 random tiles, placeholder for now, probably should make a setting for this
+
+        indices = [ i for i in range(self.grid_size) ]
+
+        for i in range(5):
+            rows = indices.copy()
+            cols = indices.copy()
+
+            r1, c1 = random.choice(rows), random.choice(cols)
+
+            rows.pop(r1)
+            cols.pop(c1)
+
+            r2, c2 = random.choice(rows), random.choice(cols)
+
+            self.swap_tiles((r1, c1), (r2, c2))
 
     def get_tile(self, pos: tuple[int, int]) -> Tile:
         r, c = pos
