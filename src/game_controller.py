@@ -30,12 +30,12 @@ import random
 import warnings
 
 from transformations import HorizontalFlip, Rotate
-
+from puzzle import Puzzle
 
 class GameController:
     MAX_HINTS = 3
 
-    def __init__(self, puzzle):
+    def __init__(self, puzzle: Puzzle):
         self.puzzle = puzzle
         self.moves = 0
         self.hints_used = 0
@@ -45,22 +45,15 @@ class GameController:
 
         self._home_position = {}       # id(tile) -> (row, col) it started in
         self._orientation = {}         # id(tile) -> {"rotation": 0/90/180/270, "flip_h": bool}
-        self._reindex(seed_from=getattr(puzzle, "initial_orientations", None))
+        self._reindex(puzzle.initial_orientations)
 
     # ------------------------------------------------------------------
     # Bookkeeping
     # ------------------------------------------------------------------
-    def _reindex(self, seed_from, warn_if_missing=True):
+    def _reindex(self, seed_from):
         """(Re)build home-position/orientation tracking from the tiles
         currently sitting in puzzle.tiles - called on init and after solve().
         """
-        if seed_from is None and warn_if_missing:
-            warnings.warn(
-                "Puzzle has no 'initial_orientations' - assuming every tile "
-                "started correctly oriented. See the puzzle.py patch note "
-                "at the bottom of game_controller.py.",
-                stacklevel=2,
-            )
         self._home_position = {}
         self._orientation = {}
         for row in range(self.puzzle.grid_size):
@@ -179,13 +172,8 @@ class GameController:
 
     def solve(self):
         """Instantly solve the puzzle and clear moves/score."""
-        if not hasattr(self.puzzle, "reset_tiles"):
-            raise NotImplementedError(
-                "puzzle.py needs a reset_tiles() method for Solve to work - "
-                "see the patch note at the bottom of game_controller.py."
-            )
         self.puzzle.reset_tiles()
-        self._reindex(seed_from=None, warn_if_missing=False)  # freshly rebuilt tiles are all correctly oriented
+        self._reindex(seed_from=None)  # freshly rebuilt tiles are all correctly oriented
         self.moves = 0
         self.hints_used = 0
         self.hint_position = None
@@ -200,45 +188,3 @@ class GameController:
         self.hint_position = None  # the hint clears after the next move
         if self.tiles_incorrect() == 0:
             self.locked = True
-
-
-# ----------------------------------------------------------------------
-# REQUIRED puzzle.py additions
-# ----------------------------------------------------------------------
-# 1) Record what each tile was scrambled with, inside make_tiles():
-#
-#        self.tiles = []
-#        self.initial_orientations = {}                       # NEW
-#
-#        for i in range(self.grid_size):
-#            self.tiles.append([])
-#            for j in range(self.grid_size):
-#                tile = Tile(self.image[th*i:th*(i+1), tw*j:tw*(j+1)])
-#                n = random.randint(1, 3)
-#
-#                if n == 1:
-#                    k = random.randint(1, 3)
-#                    Rotate().transform(tile, k)
-#                    self.initial_orientations[(i, j)] = {"kind": "rotate", "n": k}   # NEW
-#                elif n == 2:
-#                    HorizontalFlip().transform(tile)
-#                    self.initial_orientations[(i, j)] = {"kind": "flip_h"}           # NEW
-#                elif n == 3:
-#                    VerticalFlip().transform(tile)
-#                    self.initial_orientations[(i, j)] = {"kind": "flip_v"}           # NEW
-#
-#                self.tiles[i].append(tile)
-#
-#    Without this, GameController can't tell which tiles the scramble left
-#    mis-oriented, so "tiles incorrect" / hints / the win check would only
-#    ever look at position, never orientation.
-#
-# 2) Add a way to rebuild pristine tiles for Solve:
-#
-#        def reset_tiles(self):
-#            """Rebuild every tile from the original image, no transform - used by Solve."""
-#            tw = int(self.w / self.grid_size)
-#            th = int(self.h / self.grid_size)
-#            for i in range(self.grid_size):
-#                for j in range(self.grid_size):
-#                    self.tiles[i][j] = Tile(self.image[th*i:th*(i+1), tw*j:tw*(j+1)])

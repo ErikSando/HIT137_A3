@@ -15,23 +15,3 @@ class Tile:
 
     def get_photoimage(self) -> tk.PhotoImage:
         return self.tk_image
-
-    # # rotate by a multiple of 90 degrees
-    # def rotate(self, n_rotations: int):
-    #     for _ in range(n_rotations):
-    #         self.image = cv2.rotate(self.image, cv2.ROTATE_90_CLOCKWISE)
-
-    #     self.make_photoimage()
-
-    # # it might be better to make the transformations into seperate classes
-    # # and perhaps have a .transform() function here that takes in an instance of a transformation class as an argument and applies it
-
-    # # flip horizontally
-    # def flip_hori(self):
-    #     self.image = cv2.flip(self.image, 1)
-    #     self.make_photoimage()
-
-    # # flip vertically
-    # def flip_vert(self):
-    #     self.image = cv2.flip(self.image, 0)
-    #     self.make_photoimage()

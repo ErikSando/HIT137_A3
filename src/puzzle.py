@@ -31,35 +31,44 @@ class Puzzle:
             self.grid_size = grid_size
 
         # width and height of individual tiles
-        tw = int(self.w / self.grid_size)
-        th = int(self.h / self.grid_size)
+        self.tw = int(self.w / self.grid_size)
+        self.th = int(self.h / self.grid_size)
 
         self.tiles = []
+        self.initial_orientations = {}
 
         for i in range(self.grid_size):
             self.tiles.append([])
 
             for j in range(self.grid_size):
-                tile = Tile(self.image[th * i : th * (i + 1), tw * j : tw * (j + 1)]) # crop the image
+                tile = Tile(self.image[self.th * i : self.th * (i + 1), self.tw * j : self.tw * (j + 1)]) # crop the image
                 # apply a transformation here, alternatively apply the transformation in the App class
 
                 # transformation examples
 
-                n = random.randint(1, 3)
+                n = random.randint(1, 2)
 
                 if n == 1:
                     t = Rotate()
-                    t.transform(tile, random.randint(1, 3))
+                    k = random.randint(1, 3)
+                    t.transform(tile, k)
+                    self.initial_orientations[(i, j)] = {"kind": "rotate", "n": k}
 
                 elif n == 2:
                     t = HorizontalFlip()
                     t.transform(tile)
+                    self.initial_orientations[(i, j)] = {"kind": "flip_h"}
 
-                elif n == 3:
-                    t = VerticalFlip()
-                    t.transform(tile)
+                # elif n == 3:
+                #     t = VerticalFlip()
+                #     t.transform(tile)
 
                 self.tiles[i].append(tile)
+
+    def reset_tiles(self):
+        for i in range(self.grid_size):
+            for j in range(self.grid_size):
+                self.tiles[i][j] = Tile(self.image[self.th * i : self.th * (i + 1), self.tw * j : self.tw * (j + 1)])
 
     def swap_tiles(self, x1: int, x2: int, y1: int, y2: int):
         temp = self.tiles[y1][x1]
@@ -68,6 +77,9 @@ class Puzzle:
 
     def get_photoimage(self) -> tk.PhotoImage:
         return self.tk_image
+
+    def solve():
+        pass
 
     def get_grid(self):
         pass
