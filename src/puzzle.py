@@ -13,6 +13,9 @@ class Puzzle:
         if raw_image is None:
             raise RuntimeError(f"could not open image: '{source}'")
 
+        #Stores the grid size selected by user
+        self.grid_size = grid_size 
+
         w, h = raw_image.shape[1], raw_image.shape[0]
         max_dim = max(w, h)
         scale = max_size / max_dim
@@ -20,11 +23,19 @@ class Puzzle:
         self.image = cv2.resize(raw_image, None, fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
 
         self.w, self.h = self.image.shape[1], self.image.shape[0]
+        # Divide image evenly by the grid size selected
+        new_w = (self.w // self.grid_size) * self.grid_size 
+        new_h = (self.h // self.grid_size) * self.grid_size
+        self.image = self.image[:new_h, :new_w] 
+        
+        # Update dimensions
+        self.w = self.image.shape[1] 
+        self.h = self.image.shape[0]
 
         rgb = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
         self.tk_image = ImageTk.PhotoImage(Image.fromarray(rgb))
 
-        self.grid_size = grid_size
+        # self.grid_size = grid_size --commented
         self.make_tiles()
 
     def make_tiles(self, grid_size: int = None):
@@ -70,6 +81,7 @@ class Puzzle:
             r2, c2 = random.choice(rows), random.choice(cols)
 
             self.swap_tiles((r1, c1), (r2, c2))
+
 
     def get_tile(self, pos: tuple[int, int]) -> Tile:
         r, c = pos
