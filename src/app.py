@@ -13,11 +13,14 @@ class App:
 
     def open_puzzle(self):
         file_path = filedialog.askopenfilename(
-                title="Select an Image",
-                filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*.bmp")]
-            )
+            title="Select an Image",
+            filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*.bmp")]
+        )
 
         if file_path:
+            for widget in self.puzzle_frame.winfo_children():
+                widget.destroy()
+
             self.puzzle = Puzzle(file_path)
 
             tk_image = tk.Label(self.base_frame, image=self.puzzle.get_photoimage())
