@@ -53,7 +53,7 @@ class App:
             
             i = 0
 
-            transformations = [ Swap, Rotate, VerticalFlip, HorizontalFlip ]
+            transformations = [ Swap(), Rotate(), VerticalFlip(), HorizontalFlip() ]
 
             # Pick the number of transformations based on the grid size
             n_transformations = config.N_TRANSFORMATIONS[self.grid_size]
@@ -68,7 +68,7 @@ class App:
                     random.randint(1, 3)
                 )
 
-                t = random.choice(transformations)()
+                t = random.choice(transformations)
                 t.apply(t_info)
 
             for row in self.puzzle.tiles:

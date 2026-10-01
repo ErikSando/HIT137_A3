@@ -5,7 +5,7 @@ from tile import Tile
 
 # Handles resizing, tiling and transformations on images to create puzzles
 class Puzzle:
-    def __init__(self, source: str, grid_size: int = 3, max_size: int = 400):
+    def __init__(self, source: str, grid_size: int = 3, resize: int = 400):
         raw_image = cv2.imread(source)
 
         if raw_image is None:
@@ -15,8 +15,15 @@ class Puzzle:
         self.grid_size = grid_size 
 
         w, h = raw_image.shape[1], raw_image.shape[0]
-        max_dim = max(w, h)
-        scale = max_size / max_dim
+
+        size = min(w, h)
+
+        start_x = int((w - size) / 2)
+        start_y = int((h - size) / 2)
+
+        raw_image = raw_image[start_y : start_y + size, start_x : start_x + size]
+
+        scale = resize / size
 
         self.image = cv2.resize(raw_image, None, fx=scale, fy=scale, interpolation=cv2.INTER_AREA)
 
