@@ -75,8 +75,6 @@ class Puzzle:
         r1, c1 = pos1
         r2, c2 = pos2
 
-        print(f"Swapping ({r1},{c1}) and ({r2},{c2})")
-
         self.tiles[r1][c1], self.tiles[r2][c2] = tile2, tile1
 
     def reset_tiles(self):
