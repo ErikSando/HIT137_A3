@@ -1,7 +1,7 @@
 import tkinter as tk
 import random
 from tkinter import filedialog
-
+from tkinter import ttk
 import config
 from menu import MenuElem, Menu
 from game_controller import GameController
@@ -14,6 +14,7 @@ class App:
         self.window = tk.Tk()
         self.window.title(title)
         self.window.geometry(f"{width}x{height}")
+        self.window.configure(bg="#F4F4F0")
 
         self.grid_choice = tk.StringVar()
         self.grid_choice.set(config.DEFAULT_GRID_SIZE)
@@ -21,17 +22,19 @@ class App:
 
         self.labels = []
 
-        back_button = MenuElem(tk.Button(self.window, text = "<", command = lambda *_: self.show_menu("start")), "place", x = 5, y = 5, width = 25, height = 25)
+        back_button = MenuElem(tk.Button(self.window, text = "<", font = ("Arial", 12, "bold"), command = lambda *_: self.show_menu("start")), "place", x = 5, y = 5, width = 25, height = 25)
 
         start_title = tk.Label(
             self.window,
             text="Welcome to the Image Puzzle Game!",
-            font=("Arial", 17, "bold")
+            font=("Arial", 17, "bold"),
+            bg="#F4F4F0"
         )
 
         grid_option_text = tk.Label(
             self.window,
-            text = "Choose Puzzle Size:"
+            text = "Choose Puzzle Size:",
+            bg="#F4F4F0",
         )
 
         grid_option_menu = tk.OptionMenu(
@@ -39,23 +42,56 @@ class App:
             self.grid_choice,
             "3 x 3",
             "4 x 4",
-            "5 x 5"
+            "5 x 5",
+        )
+        grid_option_menu.configure(
+            background="#F4F4F0",
+            foreground="black",
+            activebackground="#F4F4F0",
+            activeforeground="black"
+        )
+        grid_option_menu["menu"].configure(
+            background="#F4F4F0",
+            foreground="black",
+            activebackground="#F4F4F0",
+            activeforeground="black"
         )
 
-        open_button = tk.Button(self.window, text="Click to Select Image", command=self.open_puzzle)
+        style = ttk.Style()
+        style.theme_use("clam")
+        style.configure(
+            "Custome.TButton",
+            background="#3A5A40", #7593AD
+            foreground="#FFFFFF",
+            anchor = "w"
+        )
 
-        self.puzzle_frame = tk.Frame(self.window)
-        self.grid_frame = tk.Frame(self.puzzle_frame)
+        style.map(
+            "Custome.TButton",
+            background=[
+                ("active", "#3A5A40"),
+                ("pressed", "#3A5A40")
+            ],
+            foreground=[
+                ("active", "white"),
+                ("pressed", "white")
+            ]
+        )
+        open_button = ttk.Button(self.window, text="Click to Select Image", command=self.open_puzzle, style="Custome.TButton")
+        
+        self.puzzle_frame = tk.Frame(self.window, bg="#F4F4F0")
+        self.grid_frame = tk.Frame(self.puzzle_frame, bg="#F4F4F0")
         self.grid_frame.grid(row=0, column=1, padx=25, pady=50)
 
         puzzle_title = tk.Label(
             self.window,
             text="Image Puzzle Game",
-            font=("Arial", 17, "bold")
+            font=("Arial", 17, "bold"),
+            bg="#F4F4F0"
         )
 
         start_menu_elements = [
-            MenuElem(start_title, "pack", pady=(50, 10)),
+            MenuElem(start_title, "pack", pady=(100, 10)),
             MenuElem(grid_option_text, "pack", pady=(10, 5)),
             MenuElem(grid_option_menu, "pack", pady=5),
             MenuElem(open_button, "pack", pady=20)
