@@ -9,3 +9,8 @@ N_TRANSFORMATIONS = {
     4: 12,
     5: 20
 }
+
+OUTLINE_COLOURS = {
+    "default": "lightblue",
+    "selected": "red"
+}

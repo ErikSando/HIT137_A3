@@ -4,10 +4,9 @@ from transformations import TransformationInfo, Swap, Rotate, HorizontalFlip
 from puzzle import Puzzle
 
 class GameController:
-    MAX_HINTS = 3
-
     def __init__(self, puzzle: Puzzle):
         self.puzzle = puzzle
+
         self.moves = 0
         self.hints_used = 0
         self.hint_position = None      # (row, col) currently hinted, or None
@@ -17,6 +16,8 @@ class GameController:
         self._home_position = {}       # id(tile) -> (row, col) it started in
         self._orientation = {}         # id(tile) -> {"rotation": 0/90/180/270, "flip_h": bool}
         self._reindex(puzzle.initial_orientations)
+
+        self.MAX_HINTS = 3
 
     # Bookkeeping
     def _reindex(self, seed_from):
@@ -111,7 +112,7 @@ class GameController:
         self.selected_position = None
         self._register_move()
 
-    def handle_shift_click(self, position):
+    def handle_shift_click(self, position: tuple[int, int]):
         """Flip the clicked tile horizontally."""
 
         if self.locked or not self._valid(position):

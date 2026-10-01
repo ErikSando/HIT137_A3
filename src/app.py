@@ -3,6 +3,7 @@ import random
 from tkinter import filedialog
 
 import config
+from game_controller import GameController
 from window import Window
 from puzzle import Puzzle
 from transformations import TransformationInfo, Swap, Rotate, HorizontalFlip, VerticalFlip
@@ -11,10 +12,35 @@ from transformations import TransformationInfo, Swap, Rotate, HorizontalFlip, Ve
 class App:
     def __init__(self, window: Window):
         self.window = window
-        self.grid_size = 3 #Default Grid 3x3 
+        self.grid_size = 3 # Default Grid 3x3
+        self.labels = []
 
     def get_window(self):
         return self.window
+
+    def update(self):
+        for r in range(self.grid_size):
+            for c in range(self.grid_size):
+                bg_colour = config.OUTLINE_COLOURS["default"]
+
+                position = (r, c)
+
+                if position == self.gc.selected_position:
+                    bg_colour = config.OUTLINE_COLOURS["selected"]
+
+                self.labels[r][c].configure(image=self.puzzle.get_tile(position).get_photoimage(), bg=bg_colour)
+
+    def label_left_click(self, position: tuple[int, int]):
+        self.gc.handle_left_click(position)
+        self.update()
+
+    def label_right_click(self, position: tuple[int, int]):
+        self.gc.handle_right_click(position)
+        self.update()
+
+    def label_shift_click(self, position: tuple[int, int]):
+        self.gc.handle_shift_click(position)
+        self.update()
 
     def open_puzzle(self):
         file_path = filedialog.askopenfilename(
@@ -50,8 +76,8 @@ class App:
                 image = self.puzzle.get_photoimage()
             )
             tk_image.grid(row=0, column=0, padx=25, pady=50)
-            
-            i = 0
+
+            self.gc = GameController(self.puzzle)
 
             transformations = [ Swap(), Rotate(), VerticalFlip(), HorizontalFlip() ]
 
@@ -71,15 +97,25 @@ class App:
                 t = random.choice(transformations)
                 t.apply(t_info)
 
+            self.labels = [ [ None for _ in range(self.grid_size) ] for _ in range(self.grid_size) ]
+
+            r = 0
+
             for row in self.puzzle.tiles:
-                j = 0
+                c = 0
+
+                self.labels.append([])
 
                 for tile in row:
-                    label = tk.Label(self.puzzle_frame, image = tile.get_photoimage(), borderwidth=1, bg="lightblue")
-                    label.grid(row=i, column=j)
-                    j += 1
+                    label = tk.Label(self.puzzle_frame, image=tile.get_photoimage(), borderwidth=1, bg=config.OUTLINE_COLOURS["default"])
+                    label.grid(row=r, column=c)
+                    label.bind("<Button-1>", lambda e, r=r, c=c: self.label_left_click((r, c)))
+                    label.bind("<Shift-Button-1>", lambda e, r=r, c=c: self.label_shift_click((r, c)))
+                    label.bind("<Button-3>", lambda e, r=r, c=c: self.label_right_click((r, c)))
+                    self.labels[r][c] = label
+                    c += 1
 
-                i += 1
+                r += 1
 
     def grid_size_change(self, size):
         self.grid_size = size
