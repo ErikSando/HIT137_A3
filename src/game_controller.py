@@ -89,7 +89,7 @@ class GameController:
             return
 
         t_info = TransformationInfo(self.puzzle, [position, self.selected_position])
-        Swap().transform(t_info)
+        Swap().apply(t_info)
 
         self.selected_position = None
         self._register_move()
@@ -101,7 +101,7 @@ class GameController:
             return
 
         t_info = TransformationInfo(self.puzzle, [position])
-        Rotate().transform(t_info)
+        Rotate().apply(t_info)
 
         row, col = position
         tile = self.puzzle.tiles[row][col]
@@ -118,7 +118,7 @@ class GameController:
             return
 
         t_info = TransformationInfo(self.puzzle, [position])
-        HorizontalFlip().transform(t_info)
+        HorizontalFlip().apply(t_info)
 
         row, col = position
         tile = self.puzzle.tiles[row][col]
@@ -139,7 +139,7 @@ class GameController:
         for r in range(self.puzzle.grid_size):
             for c in range(self.puzzle.grid_size):
                 if not self._is_correct((r, c)):
-                    incorrect_tiles.push((r, c))
+                    incorrect_tiles.append((r, c))
 
         if not incorrect_tiles:
             return None
