@@ -1,7 +1,11 @@
 import tkinter as tk
+import random
 from tkinter import filedialog
+
+import config
 from window import Window
 from puzzle import Puzzle
+from transformations import TransformationInfo, Swap, Rotate, HorizontalFlip, VerticalFlip
 
 # Handles the functionality of the program
 class App:
@@ -30,15 +34,11 @@ class App:
             )
 
             self.base_frame.pack(side=tk.TOP)
+
             # Get the grid size selected by the user
             selected_grid = self.grid_choice.get()
 
-            if selected_grid == "3 x 3":
-                self.grid_size = 3
-            elif selected_grid == "4 x 4":
-                self.grid_size = 4
-            elif selected_grid == "5 x 5":
-                self.grid_size = 5
+            self.grid_size = config.GRID_SIZE[selected_grid]
 
             for widget in self.puzzle_frame.winfo_children():
                 widget.destroy()
@@ -53,11 +53,28 @@ class App:
             
             i = 0
 
+            transformations = [ Swap, Rotate, VerticalFlip, HorizontalFlip ]
+
+            # Pick the number of transformations based on the grid size
+            n_transformations = config.N_TRANSFORMATIONS[self.grid_size]
+
+            for _ in range(n_transformations):
+                t_info = TransformationInfo(
+                    self.puzzle,
+                    [
+                        (random.randint(0, self.grid_size - 1), random.randint(0, self.grid_size - 1)),
+                        (random.randint(0, self.grid_size - 1), random.randint(0, self.grid_size - 1))
+                    ],
+                    random.randint(1, 3)
+                )
+
+                t = random.choice(transformations)()
+                t.apply(t_info)
+
             for row in self.puzzle.tiles:
                 j = 0
 
                 for tile in row:
-                    # apply a transformation here, alternatively apply the transformation automatically in the Tile class
                     label = tk.Label(self.puzzle_frame, image = tile.get_photoimage(), borderwidth=1, bg="lightblue")
                     label.grid(row=i, column=j)
                     j += 1

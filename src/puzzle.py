@@ -1,9 +1,7 @@
 import cv2
 import tkinter as tk
-import random
 from PIL import Image, ImageTk
 from tile import Tile
-from transformations import Rotate, HorizontalFlip, VerticalFlip
 
 # Handles resizing, tiling and transformations on images to create puzzles
 class Puzzle:
@@ -49,39 +47,12 @@ class Puzzle:
         self.tiles = []
         self.initial_orientations = {}
 
-        transformations = [
-            Rotate(90), Rotate(180), Rotate(270),
-            # duplicated so each type of transformation has a 1/3 chance of being picked, there's probably a better approach
-            HorizontalFlip(), HorizontalFlip(), HorizontalFlip(),
-            VerticalFlip(), VerticalFlip(), VerticalFlip()
-        ]
-
         for i in range(self.grid_size):
             self.tiles.append([])
 
             for j in range(self.grid_size):
                 tile = Tile(self.image[self.th * i : self.th * (i + 1), self.tw * j : self.tw * (j + 1)]) # crop the image
-                t = random.choice(transformations) # random transformation
-                t.apply(tile)
                 self.tiles[i].append(tile)
-
-        # swap 5 random tiles, placeholder for now, probably should make a setting for this
-
-        indices = [ i for i in range(self.grid_size) ]
-
-        for i in range(5):
-            rows = indices.copy()
-            cols = indices.copy()
-
-            r1, c1 = random.choice(rows), random.choice(cols)
-
-            rows.pop(r1)
-            cols.pop(c1)
-
-            r2, c2 = random.choice(rows), random.choice(cols)
-
-            self.swap_tiles((r1, c1), (r2, c2))
-
 
     def get_tile(self, pos: tuple[int, int]) -> Tile:
         r, c = pos

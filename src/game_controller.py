@@ -1,6 +1,6 @@
 import random
 
-from transformations import HorizontalFlip, Rotate
+from transformations import TransformationInfo, Swap, Rotate, HorizontalFlip
 from puzzle import Puzzle
 
 class GameController:
@@ -88,7 +88,9 @@ class GameController:
             self.selected_position = None
             return
 
-        self.puzzle.swap_tiles(self.selected_position, position)
+        t_info = TransformationInfo(self.puzzle, [position, self.selected_position])
+        Swap().transform(t_info)
+
         self.selected_position = None
         self._register_move()
 
@@ -98,11 +100,14 @@ class GameController:
         if self.locked or not self._valid(position):
             return
 
+        t_info = TransformationInfo(self.puzzle, [position])
+        Rotate().transform(t_info)
+
         row, col = position
         tile = self.puzzle.tiles[row][col]
-        Rotate().transform(tile)
         orient = self._orientation[id(tile)]
         orient["rotation"] = (orient["rotation"] + 90) % 360
+
         self.selected_position = None
         self._register_move()
 
@@ -112,11 +117,14 @@ class GameController:
         if self.locked or not self._valid(position):
             return
 
+        t_info = TransformationInfo(self.puzzle, [position])
+        HorizontalFlip().transform(t_info)
+
         row, col = position
         tile = self.puzzle.tiles[row][col]
-        HorizontalFlip().transform(tile)
         orient = self._orientation[id(tile)]
         orient["flip_h"] = not orient["flip_h"]
+
         self.selected_position = None
         self._register_move()
 
