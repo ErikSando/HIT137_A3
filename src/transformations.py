@@ -1,6 +1,6 @@
 import cv2
+
 from puzzle import Puzzle
-from tile import Tile
 
 class TransformationInfo:
     def __init__(self, puzzle: Puzzle, positions: list[tuple[int, int]], n_rotations: int = 1):

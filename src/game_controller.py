@@ -1,5 +1,6 @@
 import random
 import numpy as np
+
 from transformations import TransformationInfo, Swap, Rotate, HorizontalFlip
 from puzzle import Puzzle
 

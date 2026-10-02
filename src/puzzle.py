@@ -1,11 +1,12 @@
 import cv2
 import tkinter as tk
 from PIL import Image, ImageTk
+
 from tile import Tile
 
 # Handles resizing, tiling and transformations on images to create puzzles
 class Puzzle:
-    def __init__(self, source: str, grid_size: int = 3, resize: int = 400):
+    def __init__(self, source: str, grid_size: int, resize: int = 400):
         raw_image = cv2.imread(source)
 
         if raw_image is None:
