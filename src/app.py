@@ -5,6 +5,7 @@ from tkinter import ttk
 import config
 from menu import MenuElem, Menu
 from game_controller import GameController
+from game_controller_ui import GameControllerUI
 from puzzle import Puzzle
 from transformations import TransformationInfo, Swap, Rotate, HorizontalFlip, VerticalFlip
 
@@ -21,6 +22,9 @@ class App:
         self.grid_size = 3 # Default Grid 3x3
 
         self.labels = []
+        self.gamecontroller_ui = None
+        self.last_locked = False
+        self.show_completion =True
 
         back_button = MenuElem(tk.Button(self.window, text = "<", font = ("Arial", 12, "bold"), command = lambda *_: self.show_menu("start")), "place", x = 5, y = 5, width = 25, height = 25)
 
@@ -63,7 +67,7 @@ class App:
             "Custome.TButton",
             background="#3A5A40", #7593AD
             foreground="#FFFFFF",
-            anchor = "w"
+            anchor = "center"
         )
 
         style.map(
@@ -112,6 +116,10 @@ class App:
         return self.window
 
     def update(self):
+        get_locked = getattr(self, "last_locked", self.gc.locked)
+        if self.gamecontroller_ui is not None:
+            self.gamecontroller_ui.display_images = []
+
         for r in range(self.grid_size):
             for c in range(self.grid_size):
                 position = (r, c)
@@ -120,7 +128,21 @@ class App:
                 if position == self.gc.selected_position:
                     bg_colour = config.OUTLINE_COLOURS["selected"]
 
-                self.labels[r][c].configure(image=self.puzzle.get_tile(position).get_photoimage(), bg=bg_colour)
+                if self.gamecontroller_ui is not None:
+                    image = self.gamecontroller_ui.tile_displayed(position)
+
+                else:
+                    image = self.puzzle.get_tile(position).get_photoimage()
+                self.labels[r][c].configure(image=image, bg=bg_colour)
+
+        if self.gamecontroller_ui is not None:
+            self.gamecontroller_ui.update_info()
+            self.gamecontroller_ui.update_original_image(self.tk_image)
+
+            if self.show_completion:
+                self.gamecontroller_ui.check_completion(get_locked)
+
+        self.last_locked = self.gc.locked
 
     def show_menu(self, name: str):
         for menu_name in self.menus:
@@ -147,11 +169,11 @@ class App:
 
             #Pass grid size
             self.puzzle = Puzzle(file_path, self.grid_size)
-            tk_image = tk.Label(
+            self.tk_image = tk.Label(
                 self.puzzle_frame,
                 image = self.puzzle.get_photoimage()
             )
-            tk_image.grid(row=0, column=0, padx=25, pady=50)
+            self.tk_image.grid(row=0, column=0, padx=25, pady=50)
 
             self.gc = GameController(self.puzzle)
 
@@ -192,6 +214,15 @@ class App:
                     c += 1
 
                 r += 1
+            self.gamecontroller_ui = GameControllerUI(
+                self.puzzle,
+                self.gc,
+                self.puzzle_frame
+            )
+
+            self.gamecontroller_ui.set_app(self)
+            self.gamecontroller_ui.build()
+            self.update()
 
     def start(self):
         self.window.mainloop()

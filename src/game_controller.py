@@ -1,5 +1,5 @@
 import random
-
+import numpy as np
 from transformations import TransformationInfo, Swap, Rotate, HorizontalFlip
 from puzzle import Puzzle
 
@@ -15,7 +15,9 @@ class GameController:
 
         self._home_position = {}       # id(tile) -> (row, col) it started in
         self._orientation = {}         # id(tile) -> {"rotation": 0/90/180/270, "flip_h": bool}
+        self._original_img = {}      
         self._reindex(puzzle.initial_orientations)
+        self._original_img_state()
 
         self.MAX_HINTS = 3
 
@@ -44,14 +46,27 @@ class GameController:
             return {"rotation": 180, "flip_h": True}
         return {"rotation": 0, "flip_h": False}
 
+    def _original_img_state(self):
+        self._original_img = {}
+        for row in range(self.puzzle.grid_size):
+            for col in range(self.puzzle.grid_size):
+                tile = self.puzzle.tiles[row][col]
+                self._original_img[id(tile)] = tile.image.copy()
+
     def _is_correct(self, pos: tuple[int, int]):
         tile = self.puzzle.get_tile(pos)
-        orient = self._orientation[id(tile)]
+        tile_id = id(tile)
 
-        return (
-            self._home_position[id(tile)] == pos
-            and orient["rotation"] == 0
-            and not orient["flip_h"]
+        if self._home_position.get(tile_id) != pos:
+            return False
+
+        original_image = self._original_img.get(tile_id)
+        if original_image is None:
+            return False
+        
+        return np.array_equal(
+            tile.image,
+            original_image
         )
 
     def _valid(self, position: tuple[int, int]):
@@ -157,6 +172,7 @@ class GameController:
 
         self.puzzle.reset_tiles()
         self._reindex(seed_from=None)  # freshly rebuilt tiles are all correctly oriented
+        self._original_img_state()
         self.moves = 0
         self.hints_used = 0
         self.hint_position = None
